@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+enable_testing()
+
+project (osrf-common)
+include(ExternalProject)
+
+set (OSRF_COMMON_MAJOR_VERSION 1)
+set (OSRF_COMMON_MINOR_VERSION 0)
+set (OSRF_COMMON_PATCH_VERSION 0)
+set (OSRF_COMMON_VERSION ${OSRF_COMMON_MAJOR_VERSION}.${OSRF_COMMON_MINOR_VERSION})
+set (OSRF_COMMON_VERSION_FULL ${OSRF_COMMON_MAJOR_VERSION}.${OSRF_COMMON_MINOR_VERSION}.${OSRF_COMMON_PATCH_VERSION})
+message (STATUS "${PROJECT_NAME} version ${OSRF_COMMON_VERSION_FULL}")
+
+# Packaging configuration
+set (CPACK_PACKAGE_VERSION "${OSRF_COMMON_VERSION_FULL}")
+set (CPACK_PACKAGE_VERSION_MAJOR "${OSRF_COMMON_MAJOR_VERSION}")
+set (CPACK_PACKAGE_VERSION_MINOR "${OSRF_COMMON_MINOR_VERSION}")
+set (CPACK_PACKAGE_VERSION_PATCH "${OSRF_COMMON_PATCH_VERSION}")
+list (APPEND CPACK_SOURCE_IGNORE_FILES ";/.hg/;.hgignore;.swp$;/build/")
+set (CPACK_SOURCE_PACKAGE_FILE_NAME "@PROJECT_NAME@-@OSRF_COMMON_VERSION_FULL@")
+include (CPack)
+
+set (ROS_DISTRO "fuerte")
+
+set (INCLUDE_INSTALL_DIR "include/${PROJECT_NAME}-${OSRF_COMMON_VERSION}/${PROJECT_NAME}")
+set (LIB_INSTALL_DIR "lib" CACHE STRING "Installation directory for libraries (relative to CMAKE_INSTALL_PREFIX)")
+set (BIN_INSTALL_DIR "bin" CACHE STRING "Installation directory for binaries (relative to CMAKE_INSTALL_PREFIX)")
+
+#####################################
+# Set the default build type
+if (NOT CMAKE_BUILD_TYPE)
+  set (CMAKE_BUILD_TYPE "RELEASE" CACHE STRING 
+    "Choose the type of build, options are: debug release profile check" FORCE)
+endif (NOT CMAKE_BUILD_TYPE)
+string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+
+add_subdirectory(ros)
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(conf_file "${CMAKE_CURRENT_SOURCE_DIR}/cmake/osrf-common-config.cmake")
+configure_file("${conf_file}.in" "${PROJECT_BINARY_DIR}/${conf_file}" @ONLY)
+install(FILES "${PROJECT_BINARY_DIR}/${conf_file}" DESTINATION share/${PROJECT_NAME}/cmake COMPONENT cmake)
+
