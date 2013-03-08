@@ -6,6 +6,7 @@ ExternalProject_Add(osrf_msgs
                     CMAKE_ARGS
                       -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                       -DOSRF_COMMON_VERSION:STRING=${OSRF_COMMON_VERSION}
+		      -DCATKIN_BUILD_BINARY_PACKAGE="1"
                     INSTALL_COMMAND "")
 install(CODE "execute_process(COMMAND make -C ${CMAKE_CURRENT_BINARY_DIR}/osrf_msgs install)")
 
